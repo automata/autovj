@@ -4,7 +4,9 @@ const MAX_VIDEOS = 25
 const RANDOM_QUERIES = [
   'party', 'monsters', 'magic', 'bacon',
   'xfiles', 'breakingbad', 'strangerthings',
-  'iwanttobelieve', 'crazy', 'puppies', 'beer'
+  'iwanttobelieve', 'crazy', 'puppies', 'beer',
+  'heisenberg', 'explosion', 'hack the planet', 'boom',
+  'omg', 'wtf', 'twinpeaks', 'minions'
 ]
 
 let lastDisplayedIndex = 0
