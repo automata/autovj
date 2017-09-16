@@ -1,0 +1,17 @@
+body {
+    font-family: 'Roboto', 'Sans Serif';
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+.video {
+  min-width: 100%; 
+  min-height: 100%;
+  width: auto; 
+  height: auto; 
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: none;
+}

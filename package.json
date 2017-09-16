@@ -1,0 +1,21 @@
+{
+  "name": "autovj",
+  "version": "0.1.0",
+  "description": "Automatic VJ",
+  "main": "index.js",
+  "scripts": {
+    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
+    "start": "http-server"
+  },
+  "author": "Vilson Vieira <vilson@void.cc>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "http-server": "^0.10.0"
+  },
+  "dependencies": {
+    "giphy-api": "^1.2.7"
+  }
+}
