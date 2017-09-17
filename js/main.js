@@ -39,23 +39,42 @@ const playVideosEvery = (interval) => {
   }, interval)
 }
 
+const loadTopVideos = () => {
+  currentVideosCounter = 0
+  giphy.trending((err, res) => {
+    let container = document.getElementById('main')
+    let { data } = res
+    for (let i=0; i<data.length; i++) {
+      let video = document.createElement('video')
+      video.setAttribute('class', 'video')
+      video.src = data[i].images.downsized_small.mp4
+      video.controls = false
+      video.autoplay = true
+      video.loop = true
+      container.appendChild(video)
+      video.addEventListener('loadeddata', () => {
+        currentVideosCounter += 1
+        let oldVideo = document.getElementById('video' + i)
+        if (oldVideo) {
+          let parentNode = oldVideo.parentNode
+          parentNode.removeChild(oldVideo)
+        }
+        video.setAttribute('id', 'video' + i)
+        if (currentVideosCounter >= MAX_VIDEOS)
+          playVideosEvery(500)
+      }, false)
+    }
+  })
+}
+
 const loadVideosAbout = (query) => {
-  // First remove all children from container (previous videos)
-  // let container = document.getElementById('main')
-  // while (container.firstChild)
-  //   container.removeChild(container.firstChild)
-  // And reset the global video counter
   currentVideosCounter = 0
   giphy.search({
     q: query
   }, (err, res) => {
-    console.log('Loaded GIFs', res)
     let container = document.getElementById('main')
     let { data } = res
     for (let i=0; i<data.length; i++) {
-      // let img = document.createElement('img')
-      // img.src = data[i].images.downsized.url
-      // container.appendChild(img)
       let video = document.createElement('video')
       video.setAttribute('class', 'video')
       video.src = data[i].images.downsized_small.mp4
@@ -86,6 +105,36 @@ const playRandomQueries = () => {
   }, 10000)
 }
 
+let menuOpen = false
+
+const toggleMenu = () => {
+  if (menuOpen) {
+    document.getElementById("menu").style.height = "0"
+    document.getElementById("cmd").blur()
+  } else {
+    document.getElementById("menu").style.height = "50px"
+    document.getElementById("cmd").focus()
+  }
+  menuOpen = !menuOpen
+}
+
+// Keyboard handling
+keyboardJS.bind('command + .', (e) => {
+  toggleMenu()
+})
+
 window.onload = () => {
-  playRandomQueries()
+  // setTimeout(loadTopVideos, 5000)
+  loadTopVideos()
+
+  const node = document.getElementById("cmd")
+  node.addEventListener('keydown', (event) => {
+    document.getElementById('loading').style.display = 'none'
+    if (event.key === "Enter") {
+      console.log(node.value)
+      loadVideosAbout(node.value)
+      node.value = ''
+      toggleMenu()
+    }
+  })
 }

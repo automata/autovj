@@ -3,6 +3,7 @@ body {
     font-size: 16px;
     padding: 0;
     margin: 0;
+    background-color: #000;
 }
 
 .video {
@@ -14,4 +15,92 @@ body {
   top: 0;
   right: 0;
   display: none;
+}
+
+#menu {
+  background-color: #000;
+  border: 0;
+  color: #fff;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0;
+  width: 100%;
+  padding: 0;
+  z-index: 2000;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  transition: 0.2s;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 100;
+  font-size: 18px;
+}
+
+#cmd {
+  background-color: #000;
+  height: 50px;
+  width: 60%;
+  border: 0;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 100;
+  font-size: 18px;
+  color: #fff;
+}
+
+#cmd:focus {
+  outline: none;
+}
+
+#loading {
+  width: 800px;
+  height: 150px;
+  color: #666;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 100;
+  font-size: 16px;
+  background-color: #000;
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: auto;
+}
+
+#loading h1 {
+  color: #fff;
+  padding: 5px;
+  margin-bottom: 50px;
+  font-size: 18px;
+}
+
+#loading b {
+  color: #999;
+}
+
+#banner {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  padding: 5px;
+  margin: 10px;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 100;
+  font-size: 18px;
+  color: #fff;
+  border: 1px #fff solid;
+  /*text-shadow: #555 0px 0px 2px;*/
+  background-color: #000;
+  z-index: 2001;
+  transition: color  1500ms;
+  -webkit-transition: color  1500ms;
+  -o-transition: color  500ms;
+  -moz-transition: color ox-shadow 500ms;
+  -ms-transition: color  500ms;
+}
+
+#banner:hover {
+  color: #000;
+  background-color: #fff;
 }
