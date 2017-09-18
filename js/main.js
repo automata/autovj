@@ -1,5 +1,7 @@
 const giphy = new GiphyAPI()
 
+const DEFAULT_BANNER = 'Type what you want to show and press <b>enter</b>. Or <b>?</b> for help'
+
 const MAX_VIDEOS = 25
 const RANDOM_QUERIES = [
   'party', 'monsters', 'magic', 'bacon',
@@ -14,6 +16,7 @@ let scheduler
 let allVideos = []
 let currentVideosCounter = 0
 let currentRandomQuery = 0
+let playDelay = 500
 
 const playVideo = (index, time) => {
   let lastVideoDisplayed = document.getElementById('video' + lastDisplayedIndex)
@@ -34,7 +37,7 @@ const playVideosEvery = (interval) => {
   // First clear all previous setIntervals
   clearInterval(scheduler)
   scheduler = setInterval(() => {
-    cont = (cont + 1) % 25
+    cont = (cont + 1) % MAX_VIDEOS
     playVideo(cont, 0)
   }, interval)
 }
@@ -61,7 +64,7 @@ const loadTopVideos = () => {
         }
         video.setAttribute('id', 'video' + i)
         if (currentVideosCounter >= MAX_VIDEOS)
-          playVideosEvery(500)
+          playVideosEvery(playDelay)
       }, false)
     }
   })
@@ -91,7 +94,7 @@ const loadVideosAbout = (query) => {
         }
         video.setAttribute('id', 'video' + i)
         if (currentVideosCounter >= MAX_VIDEOS)
-          playVideosEvery(500)
+          playVideosEvery(playDelay)
       }, false)
     }
   })
@@ -123,17 +126,60 @@ keyboardJS.bind('command + .', (e) => {
   toggleMenu()
 })
 
+const setBanner = (msg) => {
+  const banner = document.getElementById('banner')
+  banner.innerHTML = msg
+}
+
+let lastCommand
+let lastSearch
+
 window.onload = () => {
   // setTimeout(loadTopVideos, 5000)
   loadTopVideos()
 
   const node = document.getElementById("cmd")
+  setBanner(DEFAULT_BANNER)
+
   node.addEventListener('keydown', (event) => {
     document.getElementById('loading').style.display = 'none'
+    if (!lastCommand)
+      setBanner(DEFAULT_BANNER)
+    // If we are reading the first letter of input
+    if (node.value.length == 0) {
+      if (event.key === "t") {
+        lastCommand = 't'
+        setBanner('Press <b>enter</b> to show trending GIFs')
+      } else if (event.key === 'd') {
+        lastCommand = 'd'
+        setBanner('Type delay time between GIFs (in ms) and press <b>enter</b>')
+      } else if (event.key === "?" || event.key === 'h') {
+        lastCommand = '?'
+        setBanner('Type <b>t</b> for trending GIF; <b>d</b> to set delay')
+      } else {
+        setBanner(DEFAULT_BANNER)
+      }
+    }
+
     if (event.key === "Enter") {
-      console.log(node.value)
-      loadVideosAbout(node.value)
+      if (lastCommand === 't') {
+        lastCommand = null
+        loadTopVideos()
+      } else if (lastCommand === '?') {
+        lastCommand = null
+      } else if (lastCommand === 'd') {
+        lastCommand = null
+        playDelay = parseInt(node.value.match(/\d+/)[0])
+        if (lastSearch)
+          loadVideosAbout(lastSearch)
+        else
+          loadTopVideos()
+      } else {
+        loadVideosAbout(node.value)
+        lastSearch = node.value
+      }
       node.value = ''
+      setBanner(DEFAULT_BANNER)
       toggleMenu()
     }
   })
