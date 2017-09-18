@@ -1,6 +1,6 @@
-const giphy = new GiphyAPI()
+const giphy = new GiphyAPI('4j0wjZpgM62bUjK05smgdgb76PKZoktd')
 
-const DEFAULT_BANNER = 'Type what you want to show and press <b>enter</b>. Or <b>?</b> for help'
+const DEFAULT_BANNER = 'Type what you want to show and press <b>enter</b> or <b>?</b> for help'
 
 const MAX_VIDEOS = 25
 const RANDOM_QUERIES = [

@@ -1,8 +1,8 @@
 'use strict';
 
-var giphy = new GiphyAPI();
+var giphy = new GiphyAPI('4j0wjZpgM62bUjK05smgdgb76PKZoktd');
 
-var DEFAULT_BANNER = 'Type what you want to show and press <b>enter</b>. Or <b>?</b> for help';
+var DEFAULT_BANNER = 'Type what you want to show and press <b>enter</b> or <b>?</b> for help';
 
 var MAX_VIDEOS = 25;
 var RANDOM_QUERIES = ['party', 'monsters', 'magic', 'bacon', 'xfiles', 'breakingbad', 'strangerthings', 'iwanttobelieve', 'crazy', 'puppies', 'beer', 'heisenberg', 'explosion', 'hack the planet', 'boom', 'omg', 'wtf', 'twinpeaks', 'minions'];
