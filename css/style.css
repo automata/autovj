@@ -105,9 +105,7 @@ body {
 }
 
 #banner b {
-  color: #fff;
-  border: 1px #fff solid;
-  padding: 3px;
+  color: #999;
 }
 
 #banner:hover {
