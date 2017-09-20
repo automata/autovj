@@ -17,6 +17,7 @@ let allVideos = []
 let currentVideosCounter = 0
 let currentRandomQuery = 0
 let playDelay = 500
+let maxVideos = MAX_VIDEOS
 
 const playVideo = (index, time) => {
   let lastVideoDisplayed = document.getElementById('video' + lastDisplayedIndex)
@@ -37,17 +38,33 @@ const playVideosEvery = (interval) => {
   // First clear all previous setIntervals
   clearInterval(scheduler)
   scheduler = setInterval(() => {
-    cont = (cont + 1) % MAX_VIDEOS
+    cont = (cont + 1) % maxVideos
     playVideo(cont, 0)
   }, interval)
 }
 
 const loadTopVideos = () => {
   currentVideosCounter = 0
+  maxVideos = MAX_VIDEOS
   giphy.trending((err, res) => {
+    if (err) {
+      console.log('Error', err)
+      return
+    }
     let container = document.getElementById('main')
     let { data } = res
     for (let i=0; i<data.length; i++) {
+      if (!data[i].images.downsized_small) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1
+        continue
+      }
+      if (!data[i].images.downsized_small.mp4) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1
+        continue
+      }
+
       let video = document.createElement('video')
       video.setAttribute('class', 'video')
       video.src = data[i].images.downsized_small.mp4
@@ -63,7 +80,7 @@ const loadTopVideos = () => {
           parentNode.removeChild(oldVideo)
         }
         video.setAttribute('id', 'video' + i)
-        if (currentVideosCounter >= MAX_VIDEOS)
+        if (currentVideosCounter >= maxVideos)
           playVideosEvery(playDelay)
       }, false)
     }
@@ -72,12 +89,30 @@ const loadTopVideos = () => {
 
 const loadVideosAbout = (query) => {
   currentVideosCounter = 0
+  // Initially we expect a default max of videos but if something goes wrong it
+  // can change
+  maxVideos = MAX_VIDEOS
   giphy.search({
     q: query
   }, (err, res) => {
+    if (err) {
+      console.log('Error', err)
+      return
+    }
     let container = document.getElementById('main')
     let { data } = res
     for (let i=0; i<data.length; i++) {
+      if (!data[i].images.downsized_small) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1
+        continue
+      }
+      if (!data[i].images.downsized_small.mp4) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1
+        continue
+      }
+
       let video = document.createElement('video')
       video.setAttribute('class', 'video')
       video.src = data[i].images.downsized_small.mp4
@@ -93,19 +128,11 @@ const loadVideosAbout = (query) => {
           parentNode.removeChild(oldVideo)
         }
         video.setAttribute('id', 'video' + i)
-        if (currentVideosCounter >= MAX_VIDEOS)
+        if (currentVideosCounter >= maxVideos)
           playVideosEvery(playDelay)
       }, false)
     }
   })
-}
-
-const playRandomQueries = () => {
-  setInterval(() => {
-    currentRandomQuery = (currentRandomQuery + 1) % RANDOM_QUERIES.length
-    console.log(RANDOM_QUERIES[currentRandomQuery])
-    loadVideosAbout(RANDOM_QUERIES[currentRandomQuery])
-  }, 10000)
 }
 
 let menuOpen = false
@@ -135,7 +162,7 @@ let lastCommand
 let lastSearch
 
 window.onload = () => {
-  // setTimeout(loadTopVideos, 5000)
+  // Load trending GIFs by default
   loadTopVideos()
 
   const node = document.getElementById("cmd")

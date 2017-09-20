@@ -13,6 +13,7 @@ var allVideos = [];
 var currentVideosCounter = 0;
 var currentRandomQuery = 0;
 var playDelay = 500;
+var maxVideos = MAX_VIDEOS;
 
 var playVideo = function playVideo(index, time) {
   var lastVideoDisplayed = document.getElementById('video' + lastDisplayedIndex);
@@ -33,18 +34,34 @@ var playVideosEvery = function playVideosEvery(interval) {
   // First clear all previous setIntervals
   clearInterval(scheduler);
   scheduler = setInterval(function () {
-    cont = (cont + 1) % MAX_VIDEOS;
+    cont = (cont + 1) % maxVideos;
     playVideo(cont, 0);
   }, interval);
 };
 
 var loadTopVideos = function loadTopVideos() {
   currentVideosCounter = 0;
+  maxVideos = MAX_VIDEOS;
   giphy.trending(function (err, res) {
+    if (err) {
+      console.log('Error', err);
+      return;
+    }
     var container = document.getElementById('main');
     var data = res.data;
 
     var _loop = function _loop(i) {
+      if (!data[i].images.downsized_small) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1;
+        return 'continue';
+      }
+      if (!data[i].images.downsized_small.mp4) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1;
+        return 'continue';
+      }
+
       var video = document.createElement('video');
       video.setAttribute('class', 'video');
       video.src = data[i].images.downsized_small.mp4;
@@ -60,25 +77,45 @@ var loadTopVideos = function loadTopVideos() {
           parentNode.removeChild(oldVideo);
         }
         video.setAttribute('id', 'video' + i);
-        if (currentVideosCounter >= MAX_VIDEOS) playVideosEvery(playDelay);
+        if (currentVideosCounter >= maxVideos) playVideosEvery(playDelay);
       }, false);
     };
 
     for (var i = 0; i < data.length; i++) {
-      _loop(i);
+      var _ret = _loop(i);
+
+      if (_ret === 'continue') continue;
     }
   });
 };
 
 var loadVideosAbout = function loadVideosAbout(query) {
   currentVideosCounter = 0;
+  // Initially we expect a default max of videos but if something goes wrong it
+  // can change
+  maxVideos = MAX_VIDEOS;
   giphy.search({
     q: query
   }, function (err, res) {
+    if (err) {
+      console.log('Error', err);
+      return;
+    }
     var container = document.getElementById('main');
     var data = res.data;
 
     var _loop2 = function _loop2(i) {
+      if (!data[i].images.downsized_small) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1;
+        return 'continue';
+      }
+      if (!data[i].images.downsized_small.mp4) {
+        // Failed to load MP4 for some GIF, should expect less videos
+        maxVideos -= 1;
+        return 'continue';
+      }
+
       var video = document.createElement('video');
       video.setAttribute('class', 'video');
       video.src = data[i].images.downsized_small.mp4;
@@ -94,12 +131,14 @@ var loadVideosAbout = function loadVideosAbout(query) {
           parentNode.removeChild(oldVideo);
         }
         video.setAttribute('id', 'video' + i);
-        if (currentVideosCounter >= MAX_VIDEOS) playVideosEvery(playDelay);
+        if (currentVideosCounter >= maxVideos) playVideosEvery(playDelay);
       }, false);
     };
 
     for (var i = 0; i < data.length; i++) {
-      _loop2(i);
+      var _ret2 = _loop2(i);
+
+      if (_ret2 === 'continue') continue;
     }
   });
 };
