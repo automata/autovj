@@ -118,8 +118,3 @@ body {
   -moz-transition: color ox-shadow 500ms;
   -ms-transition: color  500ms;
 }
-
-#banner:hover {
-  color: #000;
-  background-color: #fff;
-}
